@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Super Cute AI Next Shot</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;800;900&display=swap" rel="stylesheet" />
 
   <style>
     :root{
-      /* Premium Aurora (Violet → Royal Blue → Cyan) */
       --grad: linear-gradient(135deg, #7C3AED 0%, #2563EB 55%, #06B6D4 100%);
-
       --bg: #F6F7FF;
-      --card: rgba(255,255,255,.88);
+      --card: rgba(255,255,255,.90);
 
       --text: #0B1220;
       --muted: #475569;
       --line: rgba(15, 23, 42, .10);
 
-      --chip: rgba(255,255,255,.90);
+      --chip: rgba(255,255,255,.92);
       --chip-line: rgba(148,163,184,.28);
 
       --blue: #2563EB;
@@ -27,20 +25,33 @@
       --danger-bg: #FFE4E6;
       --danger: #F43F5E;
 
-      --shadow: 0 22px 60px rgba(2,6,23,.14);
-      --r1: 34px;
+      --shadow: 0 18px 44px rgba(2,6,23,.14);
+      --r1: 28px;
       --focus: 0 0 0 4px rgba(37,99,235,.18);
+
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-t: env(safe-area-inset-top, 0px);
+      --app-pad: 12px;
+
+      /* one-thumb target sizes */
+      --tap: 48px;
     }
 
-    *{ box-sizing:border-box; font-family:'Prompt', system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif; -webkit-tap-highlight-color:transparent; }
+    *{
+      box-sizing:border-box;
+      font-family:'Prompt', system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html, body{ height:100%; }
 
     body{
       margin:0;
-      min-height:100vh;
-      padding: 18px 14px calc(24px + env(safe-area-inset-bottom));
+      height: 100dvh;
+      padding: calc(var(--app-pad) + var(--safe-t)) var(--app-pad) calc(var(--app-pad) + var(--safe-b));
       display:flex;
       justify-content:center;
-      align-items:flex-start;
+      align-items:stretch;
 
       background:
         radial-gradient(900px 540px at 12% 0%, rgba(124,58,237,.22), transparent 62%),
@@ -48,55 +59,44 @@
         radial-gradient(#CBD5E1 1.1px, transparent 1.1px),
         linear-gradient(180deg, #FFFFFF, var(--bg));
       background-size: auto, auto, 24px 24px, auto;
+      overscroll-behavior: none;
     }
 
-    .container{
+    .app{
       width:100%;
-      max-width: 390px;
+      max-width: 430px;
+      height: 100%;
       display:flex;
       flex-direction:column;
-      align-items:center;
-      gap: 12px;
-      margin-top: 6px;
     }
 
-    .avatar-box{
-      width: 168px;
-      height: 168px;
-      margin-bottom: -82px;
-      z-index: 10;
-      position: relative;
-      animation: float 3.2s ease-in-out infinite;
-      filter: drop-shadow(0 20px 34px rgba(37,99,235,.20));
-    }
-    @keyframes float{
-      0% { transform: translateY(0px) rotate(0deg); }
-      50%{ transform: translateY(-8px) rotate(1.1deg); }
-      100%{ transform: translateY(0px) rotate(0deg); }
-    }
-    @media (prefers-reduced-motion: reduce){
-      .avatar-box{ animation:none; }
-    }
-
+    /* Full-screen card */
     .card{
-      width:100%;
+      flex:1;
+      min-height:0;
       border-radius: var(--r1);
       overflow:hidden;
       background: var(--card);
       border:1px solid var(--line);
       box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
-    }
-
-    .header-display{
-      background: var(--grad);
-      color: #fff;
-      text-align:center;
-      padding: 86px 18px 22px;
-      border-radius: 0 0 46px 46px;
+      display:flex;
+      flex-direction:column;
       position:relative;
     }
-    .header-display::after{
+
+    /* Header (fixed area) */
+    .header{
+      position:relative;
+      background: var(--grad);
+      color:#fff;
+      padding: 18px 16px 16px;
+      padding-top: 18px;
+      border-radius: 0 0 34px 34px;
+      overflow:hidden;
+      flex: 0 0 auto;
+    }
+    .header::after{
       content:"";
       position:absolute; inset:0;
       background:
@@ -106,33 +106,53 @@
       pointer-events:none;
     }
 
-    .title{
+    .hero{
       position:relative;
       z-index:1;
-      font-size: 12.5px;
-      letter-spacing: 1.8px;
+      display:grid;
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+      align-items:center;
+    }
+
+    .avatar-box{
+      width: 92px;
+      height: 92px;
+      display:grid;
+      place-items:center;
+      filter: drop-shadow(0 14px 22px rgba(0,0,0,.20));
+      animation: float 3.2s ease-in-out infinite;
+    }
+    @keyframes float{
+      0% { transform: translateY(0px) rotate(0deg); }
+      50%{ transform: translateY(-6px) rotate(0.9deg); }
+      100%{ transform: translateY(0px) rotate(0deg); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .avatar-box{ animation:none; }
+    }
+
+    .title{
+      font-size: 12px;
+      letter-spacing: 1.6px;
       opacity: .95;
       font-weight: 900;
       text-transform: uppercase;
+      margin-bottom: 6px;
     }
 
     .result-time{
-      position:relative;
-      z-index:1;
-      font-size: 64px;
+      font-size: 56px;
       font-weight: 900;
       line-height: 1;
-      margin: 8px 0 10px;
-      text-shadow: 0 10px 28px rgba(0,0,0,.25);
+      margin: 2px 0 8px;
+      text-shadow: 0 10px 24px rgba(0,0,0,.25);
       font-variant-numeric: tabular-nums;
     }
 
     .pill-row{
-      position:relative;
-      z-index:1;
       display:flex;
       gap:10px;
-      justify-content:center;
       flex-wrap:wrap;
     }
 
@@ -141,15 +161,16 @@
       align-items:center;
       justify-content:center;
       gap:8px;
-      min-width: 140px;
-      padding: 9px 16px;
+      min-height: 38px;
+      padding: 8px 12px;
       border-radius: 999px;
       background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.20);
+      border: 1px solid rgba(255,255,255,.22);
       backdrop-filter: blur(12px);
       font-weight: 900;
-      font-size: 13.5px;
+      font-size: 13px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+      white-space: nowrap;
     }
 
     .blink{
@@ -160,12 +181,28 @@
     }
     @keyframes blinker{ 50%{ opacity:.72; } }
 
-    .controls{ padding: 22px 18px 18px; }
+    /* Controls scroll area */
+    .controls{
+      flex:1;
+      min-height:0;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 14px 14px 0;
+    }
+
+    .section{
+      background: rgba(255,255,255,.65);
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 10px 18px rgba(2,6,23,.03);
+      margin-bottom: 12px;
+    }
 
     .label{
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--muted);
-      margin-bottom: 10px;
+      margin: 0 0 10px;
       font-weight: 900;
       display:flex;
       align-items:center;
@@ -173,25 +210,25 @@
     }
 
     .time-picker-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
+      display:grid;
+      grid-template-columns: 1fr 22px 1fr;
       gap: 10px;
-      margin-bottom: 8px;
+      align-items:center;
     }
 
-    .select-wrapper{ flex:1; position:relative; }
+    .select-wrapper{ position:relative; }
 
     select{
       width:100%;
-      padding: 14px 12px;
-      font-size: 22px;
+      height: var(--tap);
+      padding: 0 12px;
+      font-size: 20px;
       font-weight: 900;
       text-align:center;
       color: var(--text);
       background: rgba(248,250,252,.96);
       border: 2px solid rgba(226,232,240,.98);
-      border-radius: 18px;
+      border-radius: 16px;
       outline:none;
       appearance:none;
       -webkit-appearance:none;
@@ -206,36 +243,43 @@
     }
 
     .colon{
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       color: rgba(71,85,105,.60);
-      margin-top: -2px;
+      text-align:center;
     }
 
-    .link-now{
-      text-align:center;
+    .now-row{
+      display:flex;
+      gap:10px;
       margin-top: 10px;
-      color: var(--blue);
-      font-size: 13.5px;
-      font-weight: 900;
-      text-decoration: underline;
-      cursor:pointer;
-      user-select:none;
     }
+
+    .btn-now{
+      flex:1;
+      height: var(--tap);
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,.30);
+      background: rgba(255,255,255,.85);
+      font-weight: 900;
+      cursor:pointer;
+      box-shadow: 0 10px 18px rgba(2,6,23,.04);
+      transition: transform .08s ease;
+    }
+    .btn-now:active{ transform: scale(.99); }
 
     .grid-minutes{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
-      margin-top: 12px;
     }
 
     .btn-min{
+      height: var(--tap);
       background: var(--chip);
       border: 1px solid var(--chip-line);
       color: #334155;
-      padding: 12px 0;
-      border-radius: 14px;
+      border-radius: 16px;
       font-size: 15px;
       font-weight: 900;
       cursor:pointer;
@@ -249,24 +293,25 @@
       color:#fff;
       border-color: rgba(37,99,235,.50);
       box-shadow: 0 18px 30px rgba(37,99,235,.22);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
     }
 
     .action-row{
-      display:flex;
+      display:grid;
+      grid-template-columns: 1fr var(--tap);
       gap:10px;
-      margin-top: 12px;
+      margin-top: 10px;
       align-items:center;
     }
 
     .input-custom{
-      flex:1;
-      padding: 13px 12px;
-      border-radius: 14px;
+      height: var(--tap);
+      padding: 0 12px;
+      border-radius: 16px;
       border: 1px solid rgba(226,232,240,.98);
       background: rgba(248,250,252,.96);
       text-align:center;
-      font-size: 14.5px;
+      font-size: 14px;
       font-weight: 900;
       outline:none;
       transition:.18s ease;
@@ -279,10 +324,10 @@
     }
 
     .btn-add{
-      width: 54px;
-      height: 46px;
+      width: var(--tap);
+      height: var(--tap);
       border:none;
-      border-radius: 14px;
+      border-radius: 16px;
       cursor:pointer;
       font-size: 22px;
       font-weight: 900;
@@ -302,17 +347,25 @@
     }
     .selected-line b{ color: var(--text); }
 
+    /* One-thumb sticky actions */
+    .sticky-actions{
+      position: sticky;
+      bottom: 0;
+      padding: 12px 0 calc(12px + var(--safe-b));
+      background: linear-gradient(180deg, rgba(246,247,255,0) 0%, rgba(246,247,255,.88) 28%, rgba(246,247,255,.96) 100%);
+      backdrop-filter: blur(10px);
+    }
+
     .btn-calc{
       width:100%;
+      height: 56px;
       background: var(--grad);
       color:#fff;
       border:none;
-      padding: 16px;
       border-radius: 18px;
       font-size: 18px;
       font-weight: 900;
       cursor:pointer;
-      margin-top: 16px;
       box-shadow: 0 20px 44px rgba(37,99,235,.26);
       transition: transform .08s ease;
       display:flex;
@@ -320,16 +373,16 @@
       align-items:center;
       gap:10px;
     }
-    .btn-calc:active{ transform: scale(.98); }
+    .btn-calc:active{ transform: scale(.99); }
 
     .btn-reset{
       width:100%;
-      margin-top: 12px;
-      padding: 14px;
+      margin-top: 10px;
+      height: 52px;
       background: var(--danger-bg);
       color: var(--danger);
       border: 1px solid rgba(244,63,94,.18);
-      border-radius: 16px;
+      border-radius: 18px;
       font-size: 15px;
       font-weight: 900;
       cursor:pointer;
@@ -339,181 +392,192 @@
       gap:8px;
       box-shadow: 0 12px 22px rgba(244,63,94,.08);
     }
+
+    /* Small phones */
+    @media (max-height: 700px){
+      .result-time{ font-size: 50px; }
+      .hero{ grid-template-columns: 82px 1fr; }
+      .avatar-box{ width:82px; height:82px; }
+    }
   </style>
 </head>
 
 <body>
-  <div class="container">
-
-    <div class="avatar-box" aria-hidden="true">
-      <svg viewBox="0 0 180 180" width="168" height="168" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="bubbleFill" cx="30%" cy="25%" r="80%">
-            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-            <stop offset="45%" stop-color="#EAF2FF" stop-opacity="0.70"/>
-            <stop offset="100%" stop-color="#D9F2FF" stop-opacity="0.55"/>
-          </radialGradient>
-
-          <linearGradient id="ringGrad" x1="20%" y1="10%" x2="90%" y2="90%">
-            <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.55"/>
-            <stop offset="55%" stop-color="#2563EB" stop-opacity="0.55"/>
-            <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.55"/>
-          </linearGradient>
-
-          <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
-            <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.18"/>
-          </filter>
-
-          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="6" result="b"/>
-            <feMerge>
-              <feMergeNode in="b"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-
-          <linearGradient id="robotAqua" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#8AF2FF"/>
-            <stop offset="60%" stop-color="#4FE0F3"/>
-            <stop offset="100%" stop-color="#31C9E7"/>
-          </linearGradient>
-
-          <linearGradient id="robotAquaDark" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#2AC3E1"/>
-            <stop offset="100%" stop-color="#1BA9C6"/>
-          </linearGradient>
-
-          <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#0B1225"/>
-            <stop offset="100%" stop-color="#101A35"/>
-          </linearGradient>
-
-          <radialGradient id="eyeGlow" cx="35%" cy="35%" r="70%">
-            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-            <stop offset="55%" stop-color="#D9FBFF" stop-opacity="0.85"/>
-            <stop offset="100%" stop-color="#7CF6FF" stop-opacity="0.55"/>
-          </radialGradient>
-        </defs>
-
-        <g filter="url(#softShadow)">
-          <circle cx="90" cy="90" r="74" fill="url(#bubbleFill)"/>
-          <circle cx="90" cy="90" r="74" fill="none" stroke="url(#ringGrad)" stroke-width="8" opacity="0.55" filter="url(#glow)"/>
-          <circle cx="90" cy="90" r="70" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.85"/>
-          <path d="M42 56c10-18 36-28 56-26" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round"/>
-        </g>
-
-        <g filter="url(#softShadow)">
-          <g>
-            <rect x="70" y="32" width="6" height="18" rx="3" fill="#2B3A4A" opacity="0.9"/>
-            <rect x="104" y="32" width="6" height="18" rx="3" fill="#2B3A4A" opacity="0.9"/>
-            <circle cx="73" cy="30" r="8.5" fill="#FF5A7A"/>
-            <circle cx="107" cy="30" r="8.5" fill="#FF5A7A"/>
-            <circle cx="73" cy="28" r="3.2" fill="#FFFFFF" opacity="0.75"/>
-            <circle cx="107" cy="28" r="3.2" fill="#FFFFFF" opacity="0.75"/>
-          </g>
-
-          <rect x="46" y="46" width="88" height="58" rx="14" fill="url(#robotAqua)" stroke="#1B9BB6" stroke-opacity="0.35" stroke-width="2"/>
-          <rect x="54" y="54" width="72" height="42" rx="12" fill="url(#screenGrad)"/>
-
-          <g>
-            <circle cx="78" cy="75" r="12" fill="#0F2246" opacity="0.95"/>
-            <circle cx="102" cy="75" r="12" fill="#0F2246" opacity="0.95"/>
-            <circle cx="78" cy="74" r="9" fill="url(#eyeGlow)"/>
-            <circle cx="102" cy="74" r="9" fill="url(#eyeGlow)"/>
-            <circle cx="82" cy="70" r="3.2" fill="#FFFFFF" opacity="0.95"/>
-            <circle cx="106" cy="70" r="3.2" fill="#FFFFFF" opacity="0.95"/>
-            <circle cx="86" cy="79" r="1.6" fill="#FFFFFF" opacity="0.55"/>
-            <circle cx="110" cy="79" r="1.6" fill="#FFFFFF" opacity="0.55"/>
-          </g>
-
-          <circle cx="67" cy="86" r="6.2" fill="#FF7AB6" opacity="0.22"/>
-          <circle cx="113" cy="86" r="6.2" fill="#FF7AB6" opacity="0.22"/>
-          <path d="M84 86c3.4 4.2 9.6 4.2 13 0" stroke="#D9FBFF" stroke-width="4" stroke-linecap="round"/>
-
-          <circle cx="40" cy="75" r="10" fill="#FF4C6D"/>
-          <circle cx="140" cy="75" r="10" fill="#FF4C6D"/>
-          <circle cx="40" cy="75" r="4" fill="#FFFFFF" opacity="0.55"/>
-          <circle cx="140" cy="75" r="4" fill="#FFFFFF" opacity="0.55"/>
-
-          <rect x="56" y="106" width="68" height="52" rx="14" fill="url(#robotAqua)" stroke="#1B9BB6" stroke-opacity="0.35" stroke-width="2"/>
-          <rect x="62" y="112" width="56" height="40" rx="12" fill="#E9FBFF" opacity="0.65"/>
-
-          <g opacity="0.95">
-            <circle cx="72" cy="122" r="5" fill="#FF5A7A"/>
-            <circle cx="86" cy="122" r="5" fill="#FBBF24"/>
-            <circle cx="100" cy="122" r="5" fill="#34D399"/>
-            <circle cx="114" cy="122" r="5" fill="#60A5FA"/>
-            <circle cx="72" cy="138" r="5" fill="#FB7185"/>
-            <circle cx="86" cy="138" r="5" fill="#F59E0B"/>
-            <circle cx="100" cy="138" r="5" fill="#22C55E"/>
-            <circle cx="114" cy="138" r="5" fill="#3B82F6"/>
-          </g>
-
-          <g>
-            <rect x="40" y="118" width="18" height="10" rx="5" fill="url(#robotAquaDark)"/>
-            <rect x="122" y="118" width="18" height="10" rx="5" fill="url(#robotAquaDark)"/>
-            <circle cx="38" cy="123" r="8.5" fill="#FF4C6D"/>
-            <circle cx="142" cy="123" r="8.5" fill="#FF4C6D"/>
-          </g>
-
-          <g>
-            <rect x="60" y="154" width="26" height="12" rx="6" fill="#FF4C6D"/>
-            <rect x="94" y="154" width="26" height="12" rx="6" fill="#FF4C6D"/>
-            <rect x="60" y="154" width="26" height="6" rx="3" fill="#FFFFFF" opacity="0.30"/>
-            <rect x="94" y="154" width="26" height="6" rx="3" fill="#FFFFFF" opacity="0.30"/>
-          </g>
-        </g>
-      </svg>
-    </div>
-
+  <div class="app">
     <div class="card">
-      <div class="header-display">
-        <div class="title">NEXT SHOT TIME</div>
-        <div class="result-time" id="resultDisplay">--:--</div>
-        <div class="pill-row">
-          <div class="pill" id="countdownBadge">⏳ รอข้อมูล...</div>
-          <div class="pill" id="selectedBadge">🎯 นาทีที่เลือก: —</div>
+
+      <div class="header">
+        <div class="hero">
+          <div class="avatar-box" aria-hidden="true">
+            <!-- SVG kept as-is (scaled) -->
+            <svg viewBox="0 0 180 180" width="92" height="92" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="bubbleFill" cx="30%" cy="25%" r="80%">
+                  <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+                  <stop offset="45%" stop-color="#EAF2FF" stop-opacity="0.70"/>
+                  <stop offset="100%" stop-color="#D9F2FF" stop-opacity="0.55"/>
+                </radialGradient>
+                <linearGradient id="ringGrad" x1="20%" y1="10%" x2="90%" y2="90%">
+                  <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.55"/>
+                  <stop offset="55%" stop-color="#2563EB" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.55"/>
+                </linearGradient>
+                <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
+                  <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.18"/>
+                </filter>
+                <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="6" result="b"/>
+                  <feMerge>
+                    <feMergeNode in="b"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+                <linearGradient id="robotAqua" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#8AF2FF"/>
+                  <stop offset="60%" stop-color="#4FE0F3"/>
+                  <stop offset="100%" stop-color="#31C9E7"/>
+                </linearGradient>
+                <linearGradient id="robotAquaDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#2AC3E1"/>
+                  <stop offset="100%" stop-color="#1BA9C6"/>
+                </linearGradient>
+                <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#0B1225"/>
+                  <stop offset="100%" stop-color="#101A35"/>
+                </linearGradient>
+                <radialGradient id="eyeGlow" cx="35%" cy="35%" r="70%">
+                  <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+                  <stop offset="55%" stop-color="#D9FBFF" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#7CF6FF" stop-opacity="0.55"/>
+                </radialGradient>
+              </defs>
+
+              <g filter="url(#softShadow)">
+                <circle cx="90" cy="90" r="74" fill="url(#bubbleFill)"/>
+                <circle cx="90" cy="90" r="74" fill="none" stroke="url(#ringGrad)" stroke-width="8" opacity="0.55" filter="url(#glow)"/>
+                <circle cx="90" cy="90" r="70" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.85"/>
+                <path d="M42 56c10-18 36-28 56-26" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round"/>
+              </g>
+
+              <g filter="url(#softShadow)">
+                <g>
+                  <rect x="70" y="32" width="6" height="18" rx="3" fill="#2B3A4A" opacity="0.9"/>
+                  <rect x="104" y="32" width="6" height="18" rx="3" fill="#2B3A4A" opacity="0.9"/>
+                  <circle cx="73" cy="30" r="8.5" fill="#FF5A7A"/>
+                  <circle cx="107" cy="30" r="8.5" fill="#FF5A7A"/>
+                  <circle cx="73" cy="28" r="3.2" fill="#FFFFFF" opacity="0.75"/>
+                  <circle cx="107" cy="28" r="3.2" fill="#FFFFFF" opacity="0.75"/>
+                </g>
+
+                <rect x="46" y="46" width="88" height="58" rx="14" fill="url(#robotAqua)" stroke="#1B9BB6" stroke-opacity="0.35" stroke-width="2"/>
+                <rect x="54" y="54" width="72" height="42" rx="12" fill="url(#screenGrad)"/>
+
+                <g>
+                  <circle cx="78" cy="75" r="12" fill="#0F2246" opacity="0.95"/>
+                  <circle cx="102" cy="75" r="12" fill="#0F2246" opacity="0.95"/>
+                  <circle cx="78" cy="74" r="9" fill="url(#eyeGlow)"/>
+                  <circle cx="102" cy="74" r="9" fill="url(#eyeGlow)"/>
+                  <circle cx="82" cy="70" r="3.2" fill="#FFFFFF" opacity="0.95"/>
+                  <circle cx="106" cy="70" r="3.2" fill="#FFFFFF" opacity="0.95"/>
+                  <circle cx="86" cy="79" r="1.6" fill="#FFFFFF" opacity="0.55"/>
+                  <circle cx="110" cy="79" r="1.6" fill="#FFFFFF" opacity="0.55"/>
+                </g>
+
+                <circle cx="67" cy="86" r="6.2" fill="#FF7AB6" opacity="0.22"/>
+                <circle cx="113" cy="86" r="6.2" fill="#FF7AB6" opacity="0.22"/>
+                <path d="M84 86c3.4 4.2 9.6 4.2 13 0" stroke="#D9FBFF" stroke-width="4" stroke-linecap="round"/>
+
+                <circle cx="40" cy="75" r="10" fill="#FF4C6D"/>
+                <circle cx="140" cy="75" r="10" fill="#FF4C6D"/>
+                <circle cx="40" cy="75" r="4" fill="#FFFFFF" opacity="0.55"/>
+                <circle cx="140" cy="75" r="4" fill="#FFFFFF" opacity="0.55"/>
+
+                <rect x="56" y="106" width="68" height="52" rx="14" fill="url(#robotAqua)" stroke="#1B9BB6" stroke-opacity="0.35" stroke-width="2"/>
+                <rect x="62" y="112" width="56" height="40" rx="12" fill="#E9FBFF" opacity="0.65"/>
+
+                <g opacity="0.95">
+                  <circle cx="72" cy="122" r="5" fill="#FF5A7A"/>
+                  <circle cx="86" cy="122" r="5" fill="#FBBF24"/>
+                  <circle cx="100" cy="122" r="5" fill="#34D399"/>
+                  <circle cx="114" cy="122" r="5" fill="#60A5FA"/>
+                  <circle cx="72" cy="138" r="5" fill="#FB7185"/>
+                  <circle cx="86" cy="138" r="5" fill="#F59E0B"/>
+                  <circle cx="100" cy="138" r="5" fill="#22C55E"/>
+                  <circle cx="114" cy="138" r="5" fill="#3B82F6"/>
+                </g>
+
+                <g>
+                  <rect x="40" y="118" width="18" height="10" rx="5" fill="url(#robotAquaDark)"/>
+                  <rect x="122" y="118" width="18" height="10" rx="5" fill="url(#robotAquaDark)"/>
+                  <circle cx="38" cy="123" r="8.5" fill="#FF4C6D"/>
+                  <circle cx="142" cy="123" r="8.5" fill="#FF4C6D"/>
+                </g>
+
+                <g>
+                  <rect x="60" y="154" width="26" height="12" rx="6" fill="#FF4C6D"/>
+                  <rect x="94" y="154" width="26" height="12" rx="6" fill="#FF4C6D"/>
+                  <rect x="60" y="154" width="26" height="6" rx="3" fill="#FFFFFF" opacity="0.30"/>
+                  <rect x="94" y="154" width="26" height="6" rx="3" fill="#FFFFFF" opacity="0.30"/>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <div>
+            <div class="title">NEXT SHOT TIME</div>
+            <div class="result-time" id="resultDisplay">--:--</div>
+            <div class="pill-row">
+              <div class="pill" id="countdownBadge">⏳ รอข้อมูล...</div>
+              <div class="pill" id="selectedBadge">🎯 นาทีที่เลือก: —</div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="controls">
-        <label class="label">⏰ เวลาเริ่ม (Start Time)</label>
+        <div class="section">
+          <label class="label">⏰ เวลาเริ่ม (Start Time)</label>
 
-        <div class="time-picker-row">
-          <div class="select-wrapper">
-            <select id="hourSelect" aria-label="hour"></select>
+          <div class="time-picker-row">
+            <div class="select-wrapper">
+              <select id="hourSelect" aria-label="hour"></select>
+            </div>
+            <div class="colon">:</div>
+            <div class="select-wrapper">
+              <select id="minuteSelect" aria-label="minute"></select>
+            </div>
           </div>
-          <div class="colon">:</div>
-          <div class="select-wrapper">
-            <select id="minuteSelect" aria-label="minute"></select>
+
+          <div class="now-row">
+            <button class="btn-now" type="button" onclick="setCurrentTime(true)">⚡ ใช้เวลาตอนนี้ (Now)</button>
           </div>
         </div>
 
-        <div class="link-now" onclick="setCurrentTime()">⚡ ใช้เวลาตอนนี้ (Now)</div>
-
-        <div style="margin-top:18px;">
+        <div class="section">
           <label class="label">⏱️ ระยะเวลา (Duration)</label>
 
           <div class="grid-minutes">
-            <button class="btn-min" onclick="selectMinute(5, this)">+5</button>
-            <button class="btn-min" onclick="selectMinute(10, this)">+10</button>
-            <button class="btn-min" onclick="selectMinute(15, this)">+15</button>
-            <button class="btn-min" onclick="selectMinute(30, this)">+30</button>
+            <button class="btn-min" type="button" onclick="selectMinute(5, this)">+5</button>
+            <button class="btn-min" type="button" onclick="selectMinute(10, this)">+10</button>
+            <button class="btn-min" type="button" onclick="selectMinute(15, this)">+15</button>
+            <button class="btn-min" type="button" onclick="selectMinute(30, this)">+30</button>
           </div>
 
           <div class="action-row">
-            <input type="number" id="customMinInput" class="input-custom" placeholder="กรอกนาทีอื่นๆ..." min="0" step="1">
-            <button class="btn-add" onclick="useCustomMinute()">+</button>
+            <input type="number" id="customMinInput" class="input-custom" placeholder="กรอกนาทีอื่นๆ..." min="0" step="1" inputmode="numeric" />
+            <button class="btn-add" type="button" onclick="useCustomMinute()">+</button>
           </div>
 
           <div class="selected-line" id="selectedLine">เลือกแล้ว: <b>—</b></div>
         </div>
 
-        <button class="btn-calc" onclick="calculate()">✨ คำนวณ (Calculate)</button>
-        <button class="btn-reset" onclick="resetAll()">🔄 ล้างค่า (Reset)</button>
+        <div class="sticky-actions">
+          <button class="btn-calc" type="button" onclick="calculate()">✨ คำนวณ (Calculate)</button>
+          <button class="btn-reset" type="button" onclick="resetAll()">🔄 ล้างค่า (Reset)</button>
+        </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
   <script>
@@ -538,7 +602,7 @@
         mSelect.appendChild(opt);
       }
 
-      setCurrentTime();
+      setCurrentTime(false);
       updateSelectedUI();
     };
 
@@ -548,10 +612,15 @@
       document.getElementById('selectedLine').innerHTML = `เลือกแล้ว: <b>${text}</b>`;
     }
 
-    function setCurrentTime() {
+    function setCurrentTime(resetCountdown) {
       const now = new Date();
       document.getElementById('hourSelect').value = now.getHours();
       document.getElementById('minuteSelect').value = now.getMinutes();
+
+      if (resetCountdown === true) {
+        // only refresh picks; do not force reset state unless user wants
+        // keep selectedMinutes as-is for one-thumb workflow
+      }
     }
 
     function selectMinute(min, btn) {
@@ -566,7 +635,10 @@
       const val = document.getElementById('customMinInput').value;
       if (val !== '') {
         const n = parseInt(val, 10);
-        if (!Number.isFinite(n) || n < 0) { alert("⚠️ กรุณากรอกนาทีเป็นตัวเลข ≥ 0"); return; }
+        if (!Number.isFinite(n) || n < 0) {
+          alert("⚠️ กรุณากรอกนาทีเป็นตัวเลข ≥ 0");
+          return;
+        }
         selectedMinutes = n;
         document.querySelectorAll('.btn-min').forEach(b => b.classList.remove('active'));
         updateSelectedUI();
@@ -605,31 +677,51 @@
       countdownInterval = setInterval(updateTimer, 1000);
     }
 
+    function isSameDay(d1, d2) {
+      return d1.getFullYear() === d2.getFullYear()
+        && d1.getMonth() === d2.getMonth()
+        && d1.getDate() === d2.getDate();
+    }
+
     function calculate() {
       const hVal = parseInt(document.getElementById('hourSelect').value, 10);
       const mVal = parseInt(document.getElementById('minuteSelect').value, 10);
 
-      if (selectedMinutes === 0) { alert("⚠️ กรุณาเลือกนาทีที่จะบวกเพิ่ม"); return; }
+      if (selectedMinutes === 0) {
+        alert("⚠️ กรุณาเลือกนาทีที่จะบวกเพิ่ม");
+        return;
+      }
 
-      const date = new Date();
-      date.setHours(hVal);
-      date.setMinutes(mVal);
-      date.setSeconds(0);
+      const base = new Date();
+      base.setHours(hVal);
+      base.setMinutes(mVal);
+      base.setSeconds(0);
+      base.setMilliseconds(0);
 
-      date.setMinutes(date.getMinutes() + selectedMinutes);
+      const target = new Date(base.getTime());
+      target.setMinutes(target.getMinutes() + selectedMinutes);
 
-      const nextH = String(date.getHours()).padStart(2, '0');
-      const nextM = String(date.getMinutes()).padStart(2, '0');
+      // Requirement: no cross-day
+      if (!isSameDay(base, target)) {
+        const badge = document.getElementById('countdownBadge');
+        badge.classList.remove('blink');
+        badge.innerText = "⚠️ เกิน 24:00 (ห้ามข้ามวัน)";
+        alert("⚠️ เวลาที่คำนวณได้ข้ามวัน (เกิน 24:00)\nกรุณาเลือกเวลาเริ่มให้เร็วขึ้น หรือ ลดจำนวนนาที");
+        return;
+      }
+
+      const nextH = String(target.getHours()).padStart(2, '0');
+      const nextM = String(target.getMinutes()).padStart(2, '0');
 
       document.getElementById('resultDisplay').innerText = `${nextH}:${nextM}`;
-      startCountdown(date);
+      startCountdown(target);
     }
 
     function resetAll() {
       if (countdownInterval) clearInterval(countdownInterval);
       selectedMinutes = 0;
 
-      setCurrentTime();
+      setCurrentTime(false);
       updateSelectedUI();
 
       document.getElementById('resultDisplay').innerText = '--:--';
